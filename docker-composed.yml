@@ -1,0 +1,24 @@
+services:
+  selenium-chrome:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+    # 掛在系統資料夾/dev/shm以增進表現，宿主機也是linux系統使用
+    # volumes:
+    #   - /dev/shm:/dev/shm
+
+  python-app:
+    build:
+      context: .
+      dockerfile: crawl_dockerfile
+    depends_on:
+      - selenium-chrome
+    environment:
+      - SELENIUM_URL=http://selenium-chrome:4444/wd/hub
+    
+    restart: unless-stopped
+    command:
+            - sleep
+            - inf
+
+# docker-compose up --build

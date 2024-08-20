@@ -1,0 +1,83 @@
+# Part1 : image/平台 選擇
+
+# image 選擇
+FROM python:3.12-slim-bullseye
+# 如果要指定平台
+# FROM --platform=linux/amd64 python:3.12-slim-bullseye
+
+# Part2 : 時區設置 
+
+# 設定環境變數
+#設定安裝過程不顯示交互框 
+ENV DEBIAN_FRONTEND=noninteractive
+# 設定時區TIMEZONE
+ENV TIMEZONE=Asia/Taipei
+
+# 將$TIMEZONE的值寫入/etc/timezone文件中
+# /etc/localtime 是一個文件，在 Unix 和 Linux 系統中用來設置系統的本地時間（時區）。
+RUN echo $TIMEZONE > /etc/timezone
+
+# 根據本地端變數連結系統對應文件
+# ln : link(連結)
+# -snf : 連接選項(之後再看)
+# /usr/share/zoneinfo/ 是 Unix 和 Linux 系統中一個重要的目錄，專門用於存儲時區信息文件。
+# 這些文件提供了系統如何處理各種時區的詳細信息，包括當前時區的偏移量、夏令時間規則等。這些信息對於正確顯示和計算時間至關重要。
+# 目錄內容
+# 時區文件: /usr/share/zoneinfo/ 目錄包含了許多以地區和城市命名的時區文件。例如：
+# /usr/share/zoneinfo/Asia/Taipei：代表台北時間的時區信息。
+# /usr/share/zoneinfo/Europe/London：代表倫敦的時區信息。
+RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+
+
+# Part3 : 安裝應用程式
+
+# 更新應用程式資訊
+# 下載所有在
+# /etc/apt/sources.list 和 /etc/apt/sources.list.d/(之後再看)
+# 中package的資訊，但不會直接安裝
+RUN apt-get update
+# 如果要直接安裝
+# apt-get upgrade
+
+# apt-get install 安裝系統軟體:
+# zsh 提供了一個強大的命令行界面。
+# vim 是一個高效的文本編輯器。
+# curl 和 wget 用於下載和處理網絡數據。
+# zip 用於處理壓縮文件。
+# make 用於自動化編譯過程。
+# procps 提供了系統監控工具。
+# gcc 是編譯 C/C++ 程序的編譯器。
+# python3-dev 提供 Python 開發所需的庫和工具。
+# -y表示自動回答yes
+RUN apt-get install git zsh vim curl wget zip procps gcc python3-dev -y
+# 清理緩存
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
+# 安裝Oh My Zsh
+# sh : shell
+# -c : 執行後續命令
+# curl : 使用curl安裝
+# echo "Y" |將參數Y傳給安裝腳本
+RUN echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# 安裝 pip 套件
+RUN pip install --upgrade pip
+# 使用pip安裝 Python 套件
+RUN pip install selenium requests beautifulsoup4
+
+# 複製本地端資料夾到容器中
+# CPOY [本地端相對於dockerfile路徑] [容器中的路徑]
+# . dockerfile目前路經的資料夾
+# / 在容器的根目錄創建資料夾
+COPY . /workspace/
+# 設置工作目錄
+WORKDIR /
+
+# 設定容器啟動命令
+CMD ["/bin/bash"]
+# CMD ["python", "your-script.py"]
+
+# 創建完成後，在shell中輸入命令
+# docker build -f crawl_dockerfile -t my_test_image .
+# .表示當前目錄，要先使用cd移動到本地端的資料夾目錄
