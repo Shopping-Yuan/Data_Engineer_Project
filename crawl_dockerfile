@@ -61,10 +61,6 @@ RUN rm -rf /var/lib/apt/lists/*
 # echo "Y" |將參數Y傳給安裝腳本
 RUN echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-#確認python安裝位置，將其寫入python_path.txt中
-#預設應該是/usr/local/bin/python
-RUN which python > /workspace/python_path.txt
-
 # 安裝 pip 套件
 RUN pip install --upgrade pip
 # 使用pip安裝 Python 套件
@@ -74,12 +70,12 @@ RUN pip install selenium requests beautifulsoup4
 # CPOY [本地端相對於dockerfile路徑] [容器中的路徑]
 # . dockerfile目前路經的資料夾
 # / 在容器的根目錄創建資料夾
-COPY  . /
-
+COPY . /workspace/
 # 設置工作目錄
-# WORKDIR /
+WORKDIR /
 
-# 設定容器啟動命令（可選）
+# 設定容器啟動命令
+CMD ["/bin/bash"]
 # CMD ["python", "your-script.py"]
 
 # 創建完成後，在shell中輸入命令

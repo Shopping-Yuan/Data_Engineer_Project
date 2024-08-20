@@ -1,29 +1,16 @@
 {
-    "name": "Python Development Container",
-    "dockerFile": "Dockerfile",
-    "context": ".",
-    "settings": {"python.pythonPath": "/usr/local/bin/python"},
-    "extensions": ["ms-python.python","ms-toolsai.jupyter"],
-    "mounts": [
-      "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
-    ],
-    "postCreateCommand": "pip install -r requirements.txt",
-    "remoteUser": "vscode"
-  }
-  {
-    "name": "Python Development Container",
-    "dockerFile": "Dockerfile",
-    "context": ".",
-    "settings": {
-      "python.pythonPath": "/usr/local/bin/python"
-    },
-    "extensions": [
-      "ms-python.python",
-      "ms-toolsai.jupyter"
-    ],
-    "mounts": [
-      "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
-    ],
-    "postCreateCommand": "cat /workspace/python_path.txt && pip install -r requirements.txt",
-    "remoteUser": "vscode"
-  }
+  "name": "Python Development Container",
+  "dockerFile": "crawl_dockerfile",
+  "context": ".",
+  "settings": {
+    "python.pythonPath": "/usr/local/bin/python"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter"
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder}/DATA_ENGINEER_PROJECT,target=/workspace/data_project,type=bind"
+  ],
+  "remoteUser": "vscode"
+}
